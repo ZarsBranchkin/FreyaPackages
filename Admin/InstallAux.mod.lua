@@ -6,8 +6,6 @@ return function(package, p2)
   -- This will do
   if p2 then
     game.StarterPlayer.StarterPlayerScripts.FreyaAdminClient:Destroy();
-    game.ServerScriptService.FreyaAdminServer:Destroy();
   end
   root.FreyaAdminClient.Parent = game.StarterPlayer.StarterPlayerScripts;
-  root.FreyaAdminServer.Parent = game.ServerScriptService;
 end
