@@ -401,6 +401,7 @@ local ret = {
   outBounce = outBounce,
   inOutBounce = inOutBounce,
   outInBounce = outInBounce,
+	Factored = require(script.Factored)
 }
 
 local copy = {};
