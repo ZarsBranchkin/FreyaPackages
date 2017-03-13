@@ -6,8 +6,9 @@ local Colours = {
     return Color3.fromRGB(
       tonumber(h:sub(1,2), 16),
       tonumber(h:sub(3,4), 16),
-      tonumber(h:sub(5,6), 16),
+      tonumber(h:sub(5,6), 16)
     );
+  end;
 };
 
 Colours.Material = Colours.Google;
