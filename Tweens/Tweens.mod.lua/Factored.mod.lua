@@ -164,107 +164,38 @@ local function inOutExpo(i)
   end
 end
 
-local function outInExpo(t, b, c, d)
-  if t < d / 2 then
-    return outExpo(t * 2, b, c / 2, d)
+local function outInExpo(i)
+  if i < 0.5 then
+    return outExpo(i*2)*0.5
   else
-    return inExpo((t * 2) - d, b + c / 2, c / 2, d)
+    return 0.5+inExpo(i*2)*0.5
   end
 end
 
-local function inCirc(t, b, c, d)
-  t = t / d
-  return(-c * (sqrt(1 - pow(t, 2)) - 1) + b)
+local function inCirc(i)
+  return 1 - sqrt(1 - i*i)
 end
 
-local function outCirc(t, b, c, d)
-  t = t / d - 1
-  return(c * sqrt(1 - pow(t, 2)) + b)
+local function outCirc(i)
+  i = i - 1
+  return sqrt(1 - i*i)
 end
 
-local function inOutCirc(t, b, c, d)
-  t = t / d * 2
-  if t < 1 then
-    return -c / 2 * (sqrt(1 - t * t) - 1) + b
+local function inOutCirc(i)
+  i = i*2
+  if i < 1 then
+    return -0.5 * (sqrt(1 - i*i) - 1) 
   else
-    t = t - 2
-    return c / 2 * (sqrt(1 - t * t) + 1) + b
+    i = i - 2
+    return 0.5 * (sqrt(1 - i*i) + 1) 
   end
 end
 
-local function outInCirc(t, b, c, d)
-  if t < d / 2 then
-    return outCirc(t * 2, b, c / 2, d)
+local function outInCirc(i)
+  if i < 0.5 then
+    return outCirc(i*2)*0.5
   else
-    return inCirc((t * 2) - d, b + c / 2, c / 2, d)
-  end
-end
-
-local function inBack(t, b, c, d, s)
-  if not s then s = 1.70158 end
-  t = t / d
-  return c * t * t * ((s + 1) * t - s) + b
-end
-
-local function outBack(t, b, c, d, s)
-  if not s then s = 1.70158 end
-  t = t / d - 1
-  return c * (t * t * ((s + 1) * t + s) + 1) + b
-end
-
-local function inOutBack(t, b, c, d, s)
-  if not s then s = 1.70158 end
-  s = s * 1.525
-  t = t / d * 2
-  if t < 1 then
-    return c / 2 * (t * t * ((s + 1) * t - s)) + b
-  else
-    t = t - 2
-    return c / 2 * (t * t * ((s + 1) * t + s) + 2) + b
-  end
-end
-
-local function outInBack(t, b, c, d, s)
-  if t < d / 2 then
-    return outBack(t * 2, b, c / 2, d, s)
-  else
-    return inBack((t * 2) - d, b + c / 2, c / 2, d, s)
-  end
-end
-
-local function outBounce(t, b, c, d)
-  t = t / d
-  if t < 1 / 2.75 then
-    return c * (7.5625 * t * t) + b
-  elseif t < 2 / 2.75 then
-    t = t - (1.5 / 2.75)
-    return c * (7.5625 * t * t + 0.75) + b
-  elseif t < 2.5 / 2.75 then
-    t = t - (2.25 / 2.75)
-    return c * (7.5625 * t * t + 0.9375) + b
-  else
-    t = t - (2.625 / 2.75)
-    return c * (7.5625 * t * t + 0.984375) + b
-  end
-end
-
-local function inBounce(t, b, c, d)
-  return c - outBounce(d - t, 0, c, d) + b
-end
-
-local function inOutBounce(t, b, c, d)
-  if t < d / 2 then
-    return inBounce(t * 2, 0, c, d) * 0.5 + b
-  else
-    return outBounce(t * 2 - d, 0, c, d) * 0.5 + c * .5 + b
-  end
-end
-
-local function outInBounce(t, b, c, d)
-  if t < d / 2 then
-    return outBounce(t * 2, b, c / 2, d)
-  else
-    return inBounce((t * 2) - d, b + c / 2, c / 2, d)
+    return 0.5+inCirc(i*2)*0.5
   end
 end
 
@@ -297,19 +228,7 @@ local ret = {
   inCirc = inCirc,
   outCirc = outCirc,
   inOutCirc = inOutCirc,
-  outInCirc = outInCirc,
-  inElastic = inElastic,
-  outElastic = outElastic,
-  inOutElastic = inOutElastic,
-  outInElastic = outInElastic,
-  inBack = inBack,
-  outBack = outBack,
-  inOutBack = inOutBack,
-  outInBack = outInBack,
-  inBounce = inBounce,
-  outBounce = outBounce,
-  inOutBounce = inOutBounce,
-  outInBounce = outInBounce,
+  outInCirc = outInCirc
 }
 
 local copy = {};
