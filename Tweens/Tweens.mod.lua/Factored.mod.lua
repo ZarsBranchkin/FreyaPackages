@@ -148,7 +148,7 @@ local function outExpo(i)
   if i == 1 then
     return 1
   else
-    return 1.001 * (-1 * 2 ^ -10 * t / d) + 1) + b
+    return 1.001 * (-1 * 2 ^ (-10 * i) + 1)
   end
 end
 
