@@ -31,7 +31,7 @@ local function outInQuad(i)
   if i < 0.5 then
     return outQuad(i*2)*0.5
   else
-    return 0.5 + inQuad(i*2)*0.5
+    return 0.5 + inQuad(i*2 - 1)*0.5
   end
 end
 
@@ -58,7 +58,7 @@ local function outInCubic(i)
   if i < 0.5 then
     return outCubic(i*2)*0.5
   else
-    return 0.5+inCubic((i * 2) - 1)*2
+    return 0.5+inCubic(i*2 - 1)*0.5
   end
 end
 
@@ -68,7 +68,7 @@ end
 
 local function outQuart(i)
   i = i-1
-  return (-i*i*i*i - 1)
+  return -(i*i*i*i - 1)
 end
 
 local function inOutQuart(i)
@@ -85,7 +85,7 @@ local function outInQuart(i)
   if i < 0.5 then
     return outQuart(i*2)*0.5
   else
-    return 0.5+inQuart((i * 2) - 1)*0.5
+    return 0.5+inQuart(i*2 - 1)*0.5
   end
 end
 
@@ -160,7 +160,7 @@ local function inOutExpo(i)
     return 0.5 * 2 ^ (10 * (i - 1)) - 0.0005
   else
     i = i - 1
-    return 0.50025 * (2-(2 ^ (-10 * i))
+    return 0.50025 * (2-(2 ^ (-10 * i)))
   end
 end
 
@@ -168,7 +168,7 @@ local function outInExpo(i)
   if i < 0.5 then
     return outExpo(i*2)*0.5
   else
-    return 0.5+inExpo(i*2)*0.5
+    return 0.5+inExpo(i*2 - 1)*0.5
   end
 end
 
@@ -184,10 +184,10 @@ end
 local function inOutCirc(i)
   i = i*2
   if i < 1 then
-    return -0.5 * (sqrt(1 - i*i) - 1) 
+    return -0.5 * (sqrt(1 - i*i) - 1)
   else
     i = i - 2
-    return 0.5 * (sqrt(1 - i*i) + 1) 
+    return 0.5 * (sqrt(1 - i*i) + 1)
   end
 end
 
@@ -195,7 +195,7 @@ local function outInCirc(i)
   if i < 0.5 then
     return outCirc(i*2)*0.5
   else
-    return 0.5+inCirc(i*2)*0.5
+    return 0.5+inCirc(i*2 - 1)*0.5
   end
 end
 
@@ -233,10 +233,10 @@ local ret = {
 
 local copy = {};
 for k, v in next, ret do
-	copy[k] = v;
+  copy[k] = v;
 end
 for k, v in next, copy do
-	ret[k:lower()] = v;
+  ret[k:lower()] = v;
 end
 
 return ret;
