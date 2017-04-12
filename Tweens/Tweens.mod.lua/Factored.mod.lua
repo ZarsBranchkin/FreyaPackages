@@ -19,11 +19,10 @@ local function outQuad(i)
 end
 
 local function inOutQuad(i)
-  i = i * 2
-  if i < 1 then
-    return 0.5 * i^2
+  if i < 0.5 then
+    return 0.5*inQuad(i*2)
   else
-    return -0.5 * ((i - 1) * (i - 3) - 1)
+    return 0.5 + 0.5*outQuad(i*2 - 1)
   end
 end
 
@@ -45,12 +44,10 @@ local function outCubic(i)
 end
 
 local function inOutCubic(i)
-  i = i * 2
-  if i < 1 then
-    return i*i*i*0.5
+  if i < 0.5 then
+    return inCubic(i*2)*0.5
   else
-    i = i - 2
-    return (i * i * i + 2) * 0.5
+    return 0.5 + outCubic(i*2 - 1)*0.5
   end
 end
 
@@ -72,12 +69,10 @@ local function outQuart(i)
 end
 
 local function inOutQuart(i)
-  i = i * 2
-  if i < 1 then
-    return 0.5 * i*i*i*i
+  if i < 0.5 then
+    return inQuart(i*2)*0.5
   else
-    i = i - 2
-    return -0.5*(i*i*i*i - 2)
+    return 0.5 + outQuart(i*2 - 1)*0.5
   end
 end
 
@@ -99,12 +94,10 @@ local function outQuint(i)
 end
 
 local function inOutQuint(i)
-  i = i * 2
-  if i < 1 then
-    return 0.5*i*i*i*i*i
+  if i < 0.5 then
+    return inQuint(i*2)*0.5
   else
-    i = i - 2
-    return 0.5 * (i*i*i*i*i + 2)
+    return 0.5 + outQuint(i*2 - 1)*0.5
   end
 end
 
@@ -130,9 +123,9 @@ end
 
 local function outInSine(i)
   if i < 0.5 then
-    return outSine(i * 2)*0.5
+    return outSine(i*2)*0.5
   else
-    return 0.5+inSine((i * 2)-1)*0.5
+    return 0.5 + inSine(i*2 - 1)*0.5
   end
 end
 
@@ -152,6 +145,8 @@ local function outExpo(i)
   end
 end
 
+-- Couldn't be minimized into inExpo, outExpo
+-- Original function might be wrong
 local function inOutExpo(i)
   if i == 0 then return 0 end
   if i == 1 then return 1 end
@@ -182,12 +177,10 @@ local function outCirc(i)
 end
 
 local function inOutCirc(i)
-  i = i*2
-  if i < 1 then
-    return -0.5 * (sqrt(1 - i*i) - 1)
+  if i < 0.5 then
+    return inCirc(i*2)*0.5
   else
-    i = i - 2
-    return 0.5 * (sqrt(1 - i*i) + 1)
+    return 0.5 + outCirc(i*2 - 1)*0.5
   end
 end
 
@@ -196,6 +189,154 @@ local function outInCirc(i)
     return outCirc(i*2)*0.5
   else
     return 0.5+inCirc(i*2 - 1)*0.5
+  end
+end
+
+-- a: amplitude
+-- p: period
+local function inElastic(i, a, p)
+  local s
+
+  if i == 0  or i == 1 then
+    return i
+  end
+
+  p = p or 0.3
+  a = a or 1
+
+  if a <= 1 then
+    s = p / 4
+  else
+    s = p / (2 * pi) * asin(1/a)
+  end
+
+  i = i - 1
+
+  return -(a * pow(2, 10*i) * sin((i - s) * (2*pi) / p))
+end
+
+local function outElastic(i, a, p)
+  local s
+
+  if i == 0  or i == 1 then
+    return i
+  end
+
+  p = p or 0.3
+  a = a or 1
+
+  if a <= 1 then
+    s = p / 4
+  else
+    s = p / (2 * pi) * asin(1/a)
+  end
+
+  return a * pow(2, -10 * i) * sin((i - s) * (2*pi) / p) + 1
+end
+
+-- Couldn't be minimized into inExpo, outExpo
+-- Original function might be wrong
+local function inOutElastic(i, a, p)
+  local s
+
+  if i == 0  or i == 1 then
+    return i
+  end
+
+  i = i*2
+
+  p = p or 0.3*1.5
+  a = a or 1
+
+  if a <= 1 then
+    s = p / 4
+  else
+    s = p / (2 * pi) * asin(1/a)
+  end
+
+  if i < 1 then
+    i = i - 1
+    return -0.5 * (a * pow(2, 10*i) * sin((i - s) * (2*pi) / p))
+  else
+    i = i - 1
+    return a * pow(2, -10*i) * sin((i - s) * (2*pi) /p) * 0.5 + 1
+  end
+end
+
+local function outInElastic(i, a, p)
+  if i < 0.5 then
+    return outElastic(i*2, a, p)*0.5
+  else
+    return 0.5 + inElastic(i*2 - 1, a, p)*0.5
+  end
+end
+
+local function inBack(i, s)
+  s = s or 1.70158
+  return i*i * ((s + 1)*i - s)
+end
+
+local function outBack(i, s)
+  s = s or 1.70158
+  i = i - 1
+  return i*i * ((s + 1)*i + s) + 1
+end
+
+-- Couldn't be minimized into inExpo, outExpo
+-- Original function might be wrong
+local function inOutBack(i, s)
+  s = s or 1.70158
+  s = s * 1.525
+  i = i*2
+
+  if i < 1 then
+    return 0.5 * i*i * ((s + 1)*i - s)
+  else
+    i = i - 2
+    return 0.5 * (i*i * ((s + 1)*i + s) + 2)
+  end
+end
+
+local function outInBack(i, s)
+  if i < 0.5 then
+    return outBack(i*2)*0.5
+  else
+    return 0.5 + inBack(i*2 - 1)*0.5
+  end
+end
+
+local function outBounce(i)
+  if i < 1 / 2.75 then
+    return 7.5625 * i*i
+  elseif i < 2 / 2.75 then
+    i = i - (1.5 / 2.75)
+    return 7.5625 * i*i + 0.75
+  elseif i < 2.5 / 2.75 then
+    i = i - (2.25 / 2.75)
+    return 7.5625 * i*i + 0.9375
+  else
+    i = i - (2.625 / 2.75)
+    return 7.5625 * i*i + 0.984375
+  end
+end
+
+local function inBounce(i)
+  return 1 - outBounce(1 - i)
+end
+
+local function inOutBounce(i)
+  if i < 0.5 then
+    return inBounce(i*2)*0.5
+  else
+    return 0.5 + outBounce(i*2 - 1)*0.5
+  end
+end
+
+local function outInBounce(i)
+  if i < 0.5 then
+    return outBounce(i*2)*0.5
+  else
+    return 0.5 + inBounce(i*2 - 1)*0.5
   end
 end
 
@@ -228,7 +369,19 @@ local ret = {
   inCirc = inCirc,
   outCirc = outCirc,
   inOutCirc = inOutCirc,
-  outInCirc = outInCirc
+  outInCirc = outInCirc,
+  inElastic = inElastic,
+  outElastic = outElastic,
+  inOutElastic = inOutElastic,
+  outInElastic = outInElastic,
+  inBack = inBack,
+  outBack = outBack,
+  inOutBack = inOutBack,
+  outInBack = outInBack,
+  inBounce = inBounce,
+  outBounce = outBounce,
+  inOutBounce = inOutBounce,
+  outInBounce = outInBounce
 }
 
 local copy = {};
