@@ -6,142 +6,61 @@ local sqrt = math.sqrt
 local abs = math.abs
 local asin  = math.asin
 
-local function linear(t, b, c, d)
+local tweens = {}
+
+function tweens.linear(t, b, c, d)
   return c * t / d + b
 end
 
-local function inQuad(t, b, c, d)
+function tweens.inQuad(t, b, c, d)
   t = t / d
   return c * pow(t, 2) + b
 end
 
-local function outQuad(t, b, c, d)
+function tweens.outQuad(t, b, c, d)
   t = t / d
   return -c * t * (t - 2) + b
 end
 
-local function inOutQuad(t, b, c, d)
-  t = t / d * 2
-  if t < 1 then
-    return c / 2 * pow(t, 2) + b
-  else
-    return -c / 2 * ((t - 1) * (t - 3) - 1) + b
-  end
-end
-
-local function outInQuad(t, b, c, d)
-  if t < d / 2 then
-    return outQuad (t * 2, b, c / 2, d)
-  else
-    return inQuad((t * 2) - d, b + c / 2, c / 2, d)
-  end
-end
-
-local function inCubic (t, b, c, d)
+function tweens.inCubic (t, b, c, d)
   t = t / d
   return c * pow(t, 3) + b
 end
 
-local function outCubic(t, b, c, d)
+function tweens.outCubic(t, b, c, d)
   t = t / d - 1
   return c * (pow(t, 3) + 1) + b
 end
 
-local function inOutCubic(t, b, c, d)
-  t = t / d * 2
-  if t < 1 then
-    return c / 2 * t * t * t + b
-  else
-    t = t - 2
-    return c / 2 * (t * t * t + 2) + b
-  end
-end
-
-local function outInCubic(t, b, c, d)
-  if t < d / 2 then
-    return outCubic(t * 2, b, c / 2, d)
-  else
-    return inCubic((t * 2) - d, b + c / 2, c / 2, d)
-  end
-end
-
-local function inQuart(t, b, c, d)
+function tweens.inQuart(t, b, c, d)
   t = t / d
   return c * pow(t, 4) + b
 end
 
-local function outQuart(t, b, c, d)
+function tweens.outQuart(t, b, c, d)
   t = t / d - 1
   return -c * (pow(t, 4) - 1) + b
 end
 
-local function inOutQuart(t, b, c, d)
-  t = t / d * 2
-  if t < 1 then
-    return c / 2 * pow(t, 4) + b
-  else
-    t = t - 2
-    return -c / 2 * (pow(t, 4) - 2) + b
-  end
-end
-
-local function outInQuart(t, b, c, d)
-  if t < d / 2 then
-    return outQuart(t * 2, b, c / 2, d)
-  else
-    return inQuart((t * 2) - d, b + c / 2, c / 2, d)
-  end
-end
-
-local function inQuint(t, b, c, d)
+function tweens.inQuint(t, b, c, d)
   t = t / d
   return c * pow(t, 5) + b
 end
 
-local function outQuint(t, b, c, d)
+function tweens.outQuint(t, b, c, d)
   t = t / d - 1
   return c * (pow(t, 5) + 1) + b
 end
 
-local function inOutQuint(t, b, c, d)
-  t = t / d * 2
-  if t < 1 then
-    return c / 2 * pow(t, 5) + b
-  else
-    t = t - 2
-    return c / 2 * (pow(t, 5) + 2) + b
-  end
-end
-
-local function outInQuint(t, b, c, d)
-  if t < d / 2 then
-    return outQuint(t * 2, b, c / 2, d)
-  else
-    return inQuint((t * 2) - d, b + c / 2, c / 2, d)
-  end
-end
-
-local function inSine(t, b, c, d)
+function tweens.inSine(t, b, c, d)
   return -c * cos(t / d * (pi / 2)) + c + b
 end
 
-local function outSine(t, b, c, d)
+function tweens.outSine(t, b, c, d)
   return c * sin(t / d * (pi / 2)) + b
 end
 
-local function inOutSine(t, b, c, d)
-  return -c / 2 * (cos(pi * t / d) - 1) + b
-end
-
-local function outInSine(t, b, c, d)
-  if t < d / 2 then
-    return outSine(t * 2, b, c / 2, d)
-  else
-    return inSine((t * 2) -d, b + c / 2, c / 2, d)
-  end
-end
-
-local function inExpo(t, b, c, d)
+function tweens.inExpo(t, b, c, d)
   if t == 0 then
     return b
   else
@@ -149,7 +68,7 @@ local function inExpo(t, b, c, d)
   end
 end
 
-local function outExpo(t, b, c, d)
+function tweens.outExpo(t, b, c, d)
   if t == d then
     return b + c
   else
@@ -157,55 +76,17 @@ local function outExpo(t, b, c, d)
   end
 end
 
-local function inOutExpo(t, b, c, d)
-  if t == 0 then return b end
-  if t == d then return b + c end
-  t = t / d * 2
-  if t < 1 then
-    return c / 2 * pow(2, 10 * (t - 1)) + b - c * 0.0005
-  else
-    t = t - 1
-    return c / 2 * 1.0005 * (-pow(2, -10 * t) + 2) + b
-  end
-end
-
-local function outInExpo(t, b, c, d)
-  if t < d / 2 then
-    return outExpo(t * 2, b, c / 2, d)
-  else
-    return inExpo((t * 2) - d, b + c / 2, c / 2, d)
-  end
-end
-
-local function inCirc(t, b, c, d)
+function tweens.inCirc(t, b, c, d)
   t = t / d
   return(-c * (sqrt(1 - pow(t, 2)) - 1) + b)
 end
 
-local function outCirc(t, b, c, d)
+function tweens.outCirc(t, b, c, d)
   t = t / d - 1
   return(c * sqrt(1 - pow(t, 2)) + b)
 end
 
-local function inOutCirc(t, b, c, d)
-  t = t / d * 2
-  if t < 1 then
-    return -c / 2 * (sqrt(1 - t * t) - 1) + b
-  else
-    t = t - 2
-    return c / 2 * (sqrt(1 - t * t) + 1) + b
-  end
-end
-
-local function outInCirc(t, b, c, d)
-  if t < d / 2 then
-    return outCirc(t * 2, b, c / 2, d)
-  else
-    return inCirc((t * 2) - d, b + c / 2, c / 2, d)
-  end
-end
-
-local function inElastic(t, b, c, d, a, p)
+function tweens.inElastic(t, b, c, d, a, p)
   if t == 0 then return b end
 
   t = t / d
@@ -230,7 +111,7 @@ end
 
 -- a: amplitud
 -- p: period
-local function outElastic(t, b, c, d, a, p)
+function tweens.outElastic(t, b, c, d, a, p)
   if t == 0 then return b end
 
   t = t / d
@@ -251,79 +132,19 @@ local function outElastic(t, b, c, d, a, p)
   return a * pow(2, -10 * t) * sin((t * d - s) * (2 * pi) / p) + c + b
 end
 
--- p = period
--- a = amplitud
-local function inOutElastic(t, b, c, d, a, p)
-  if t == 0 then return b end
-
-  t = t / d * 2
-
-  if t == 2 then return b + c end
-
-  if not p then p = d * (0.3 * 1.5) end
-  if not a then a = 0 end
-
-  local s
-
-  if not a or a < abs(c) then
-    a = c
-    s = p / 4
-  else
-    s = p / (2 * pi) * asin(c / a)
-  end
-
-  if t < 1 then
-    t = t - 1
-    return -0.5 * (a * pow(2, 10 * t) * sin((t * d - s) * (2 * pi) / p)) + b
-  else
-    t = t - 1
-    return a * pow(2, -10 * t) * sin((t * d - s) * (2 * pi) / p ) * 0.5 + c + b
-  end
-end
-
--- a: amplitud
--- p: period
-local function outInElastic(t, b, c, d, a, p)
-  if t < d / 2 then
-    return outElastic(t * 2, b, c / 2, d, a, p)
-  else
-    return inElastic((t * 2) - d, b + c / 2, c / 2, d, a, p)
-  end
-end
-
-local function inBack(t, b, c, d, s)
+function tweens.inBack(t, b, c, d, s)
   if not s then s = 1.70158 end
   t = t / d
   return c * t * t * ((s + 1) * t - s) + b
 end
 
-local function outBack(t, b, c, d, s)
+function tweens.outBack(t, b, c, d, s)
   if not s then s = 1.70158 end
   t = t / d - 1
   return c * (t * t * ((s + 1) * t + s) + 1) + b
 end
 
-local function inOutBack(t, b, c, d, s)
-  if not s then s = 1.70158 end
-  s = s * 1.525
-  t = t / d * 2
-  if t < 1 then
-    return c / 2 * (t * t * ((s + 1) * t - s)) + b
-  else
-    t = t - 2
-    return c / 2 * (t * t * ((s + 1) * t + s) + 2) + b
-  end
-end
-
-local function outInBack(t, b, c, d, s)
-  if t < d / 2 then
-    return outBack(t * 2, b, c / 2, d, s)
-  else
-    return inBack((t * 2) - d, b + c / 2, c / 2, d, s)
-  end
-end
-
-local function outBounce(t, b, c, d)
+function tweens.outBounce(t, b, c, d)
   t = t / d
   if t < 1 / 2.75 then
     return c * (7.5625 * t * t) + b
@@ -339,77 +160,57 @@ local function outBounce(t, b, c, d)
   end
 end
 
-local function inBounce(t, b, c, d)
-  return c - outBounce(d - t, 0, c, d) + b
+function tweens.inBounce(t, b, c, d)
+  return c - tweens.outBounce(d - t, 0, c, d) + b
 end
 
-local function inOutBounce(t, b, c, d)
-  if t < d / 2 then
-    return inBounce(t * 2, 0, c, d) * 0.5 + b
-  else
-    return outBounce(t * 2 - d, 0, c, d) * 0.5 + c * .5 + b
-  end
-end
+tweens.Factored = require(script.Factored)
 
-local function outInBounce(t, b, c, d)
-  if t < d / 2 then
-    return outBounce(t * 2, b, c / 2, d)
-  else
-    return inBounce((t * 2) - d, b + c / 2, c / 2, d)
-  end
-end
 
-local ret = {
-  linear = linear,
-  inQuad = inQuad,
-  outQuad = outQuad,
-  inOutQuad = inOutQuad,
-  outInQuad = outInQuad,
-  inCubic  = inCubic ,
-  outCubic = outCubic,
-  inOutCubic = inOutCubic,
-  outInCubic = outInCubic,
-  inQuart = inQuart,
-  outQuart = outQuart,
-  inOutQuart = inOutQuart,
-  outInQuart = outInQuart,
-  inQuint = inQuint,
-  outQuint = outQuint,
-  inOutQuint = inOutQuint,
-  outInQuint = outInQuint,
-  inSine = inSine,
-  outSine = outSine,
-  inOutSine = inOutSine,
-  outInSine = outInSine,
-  inExpo = inExpo,
-  outExpo = outExpo,
-  inOutExpo = inOutExpo,
-  outInExpo = outInExpo,
-  inCirc = inCirc,
-  outCirc = outCirc,
-  inOutCirc = inOutCirc,
-  outInCirc = outInCirc,
-  inElastic = inElastic,
-  outElastic = outElastic,
-  inOutElastic = inOutElastic,
-  outInElastic = outInElastic,
-  inBack = inBack,
-  outBack = outBack,
-  inOutBack = inOutBack,
-  outInBack = outInBack,
-  inBounce = inBounce,
-  outBounce = outBounce,
-  inOutBounce = inOutBounce,
-  outInBounce = outInBounce,
-	Factored = require(script.Factored)
+local directionalTweens = {
+  "Quad",
+  "Cubic",
+  "Quart",
+  "Quint",
+  "Sine",
+  "Expo",
+  "Circ",
+  "Elastic",
+  "Back",
+  "Bounce"
 }
 
-local copy = {};
-for k, v in next, ret do
-	copy[k] = v;
-end
-for k, v in next, copy do
-	ret[k:lower()] = v;
+-- InOut/OutIn tween generation
+local function combinedTween(tweenA, tweenB, t, b, c, d, ...)
+  if t < d*0.5 then
+    return tweenA(t*2, b, c*0.5, d, ...)
+  else
+    return tweenB(t*2 - d, b + c*0.5, c*0.5, d, ...)
+  end
 end
 
-return ret;
+for i, tween in next, directionalTweens do
+  local inTween = tweens["in" .. tween]
+  local outTween = tweens["out" .. tween]
+
+  tweens["inOut" .. tween] = function(...)
+    return combinedTween(inTween, outTween, ...)
+  end
+
+  tweens["outIn" .. tween] = function(...)
+    return combinedTween(outTween, inTween, ...)
+  end
+end
+
+
+-- Lowercase tween aliases
+local copy = {};
+for k, v in next, tweens do
+	copy[k] = v;
+end
+
+for k, v in next, copy do
+	tweens[k:lower()] = v;
+end
+
+return tweens;
